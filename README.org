@@ -1,0 +1,6 @@
+#+title: Laboratorio 2: Prolog
+#+author: Hans Villarroel
+#+date: 2022-04-22
+Este repositorio contiene el laboratorio 2 de la asignatura: Paradigmas de
+Programacion.
+Se desarrolla este laboratorio con el uso de el lenguaje de programacion Prolog.
