@@ -3,11 +3,18 @@
 crearPrimera(N, L):-
   findall(I, between(1, N, I), L).
 
-nCartas_i(L, H, J) :-
-   between(L, H, I),
-   Z is I * H + (J+1),
-   write(Z), nl.
+nCartas_i(N,I,J,L):-
+    I = 0,L = [1].
+nCartas_i(N,I,J,[Y | Xs]) :-
+    I > 0,
+    Y is N * I + (J + 1),
+    I1 is I - 1,
+    nCartas_i(N,I1,J,Xs).
 
-nCartas(N,L):-
-    write(1),nl,
-    count_down(1,N,N).
+nCartas(N,J,L):-
+    J = 0, L = [1].
+nCartas(N,J,[Y | Xs]) :-
+    J>0,
+    J1 is J - 1,
+    nCartas_i(N,N,J,Xs),
+    nCartas(N,J1,Xs).
