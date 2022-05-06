@@ -17,7 +17,7 @@ nCartas_i(N,I,J,[Y | Xs]) :-
     nCartas_i(N,I1,J,Xs).
 
 nCartas(N,J,L):-
-    J = 0.
+    J = 0, !.
 nCartas(N,J,[Xs,L]) :-
     J>0,
     J1 is J - 1,
@@ -56,7 +56,7 @@ reemplazar(X, [X|T], L):-
 reemplazar(X, [H|T], [H|L]):-
     reemplazar(X, T, L ).
 
-partir([], _, []).
+partir([], _, []):- !.
 partir(L, X, [H|T]) :-
    length(H, X),
    append(H, LT, L),
@@ -71,11 +71,22 @@ mazoCartas(N,L):-
     flatten(L5,L6),
     reemplazar(0,L6,L7),
     X is N + 1,
-    partir(L7,X,L).
+    partir(L7,X,L), !.
 
-maximoCartas(X, L, L1):-
+maximoCartas(NumE,X, L, L1):-
+    X < 1,
+    Y is NumE ** 2 + NumE +1,
+    maximoCartas(NumE,Y, L, L1).
+
+maximoCartas(NumE,X, L, L1):-
+    X > NumE ** 2 + NumE +1,
+    Y is NumE ** 2 + NumE +1,
+    maximoCartas(NumE,Y, L, L1).
+
+maximoCartas(NumE,X, L, L1):-
     length(L1, X),
     append(L1, _, L).
+
 
 % Si no hay elementos y maxC -1
 cardsSet([],NumE,-1,Seed,CS):-
@@ -86,7 +97,7 @@ cardsSet([],NumE,-1,Seed,CS):-
 cardsSet([],NumE,MaxC,Seed,CS):-
     N is NumE - 1,
     mazoCartas(N,L),
-    maximoCartas(MaxC,L,CS).
+    maximoCartas(NumE,MaxC,L,CS).
 
 % Si hay elementos y maxC -1
 cardsSet(Elements,NumE,-1,Seed,CS):-
@@ -97,7 +108,7 @@ cardsSet(Elements,NumE,-1,Seed,CS):-
 cardsSet(Elements,NumE,MaxC,Seed,CS):-
     N is NumE - 1,
     mazoCartas(N,L),
-    maximoCartas(MaxC,L,CS).
+    maximoCartas(NumE,MaxC,L,CS).
 
 
 %% cardsSetIsDobble(CS):-
@@ -116,19 +127,37 @@ cardsSetMissingCards(CS,MS):-
     cardsSet(E,X,-1,Seed,CS1),
     subtract(CS1,CS,MS).
 
-%% cardsSetToString(CS,CS_STR):-
-    %% viewTab(CS,I)
+% Parte de CardsSetToString
+cardsSetToString(CS,CSout):-
+    printListOfList(CS,1,L1),
+    removerDup(L1,L2),
+    headOut(L2,CSout).
 
+headOut([L|X],Xout):-
+    atomics_to_string(X," ",Xout).
 
-viewTab([],I,STR).
-viewTab([H|T],I,STR) :-
+removerDup(L,X):-
+    flatten(L,L1),
+    sort(L1,X).
+printListOfList([],I,STR).
+printListOfList([H|T],I,[STR5|STR]) :-
+    number_string(I,Contador),
     printList(H,STR1),
-    string_concat("Carta: ",STR1,STR2),
-    string_concat(STR2, "\n",STR3),
+    string_concat("Carta ",Contador,STR2),
+    string_concat(STR2,": ",STR3),
+    string_concat(STR3,STR1,STR4),
+    string_concat(STR4, "\n",STR5),
     I1 is I + 1,
-    viewTab(T,I1,STR3),
-    string_concat(STR3," ",STR).
-
-
+    printListOfList(T,I1,STR).
 printList(L,STR) :-
     atomics_to_string(L," ",STR).
+%
+%%%%%% TDA GAME %%%%%%%
+
+dobbleGame(NumPlayers,CardsSet,Mode,Seed,[NumPlayers,CardsSet,Mode,Seed]).
+
+dobbleGameRegister(User,GameIn,[[User]|GameIn]):-
+    dobbleGame(INT,_,_,_,GameIn),!.
+
+
+%dobbleGameRegister(User,[[X]|GameIn],[[User,X]|GameIn]):- !.
