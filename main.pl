@@ -159,5 +159,10 @@ dobbleGame(NumPlayers,CardsSet,Mode,Seed,[NumPlayers,CardsSet,Mode,Seed]).
 dobbleGameRegister(User,GameIn,[[User]|GameIn]):-
     dobbleGame(INT,_,_,_,GameIn),!.
 
+%dobbleGameRegister(User,GameIn,[User|GameIn]):-
+%existe([N,_], [[N,_]|_]):- !.
+%existe(U,[_|Us]):- existe(U,U2).
 
-%dobbleGameRegister(User,[[X]|GameIn],[[User,X]|GameIn]):- !.
+dobbleGameRegister(User,[[X|Y]|GameIn],[[User,X|Y]|GameIn]):- !.
+
+dobbleGameWhoseTurnIsIt(Game,Username).
