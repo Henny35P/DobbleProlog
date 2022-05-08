@@ -1,0 +1,3 @@
+
+Ejemplos de predicados de ambos TDA estaran incluidas en archivo Dobble_20960400_VillarroelGonzalez.pl
+Se incluyen 3 ejemplos de uso para cada predicado en ese archivo

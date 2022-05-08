@@ -1,0 +1,16 @@
+Función                      Evaluación
+TDA                                1
+cardsSet                           1
+cardsSetIsDobble                   0
+cardsSetNthCard                    1
+cardsSetFindTotalCards             1
+CardsSetMissingCards               0.5
+cardsSetToString                   1
+dobbleGame                         1
+stackMode                          0
+dobbleGameRegister                 0.75
+DobbleGameWhoseTurnIsIt            0
+DobbleGamePlay                     0
+DobbleGameStatus                   0
+DobbleGamesScore                   0
+DobbleGametoString                 0
