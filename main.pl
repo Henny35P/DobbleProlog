@@ -3,6 +3,8 @@
 %% set_prolog_flag(answer_write_options,[max_depth(0)]).
 %%
 
+
+ %%% -------------- Creacion de Mazo --------------
 seed(14981).
 crearPrimera(N, L):-
     N1 is N + 1,
@@ -50,17 +52,45 @@ n2Cartas(N,I,[Y|L]):-
     I1 is I- 1,
     n2Cartas(N,I1,Y).
 
-reemplazar(_, [], []).
-reemplazar(X, [X|T], L):-
-    reemplazar(X, T, L), !.
-reemplazar(X, [H|T], [H|L]):-
-    reemplazar(X, T, L ).
+borrar(_, [], []).
+borrar(X, [X|T], L):-
+    borrar(X, T, L), !.
+borrar(X, [H|T], [H|L]):-
+    borrar(X, T, L ).
 
 partir([], _, []):- !.
 partir(L, X, [H|T]) :-
    length(H, X),
    append(H, LT, L),
    partir(LT, X, T).
+
+
+% Remplaza en una carta por elem
+reemplazo(_, _, [], []).
+%% reemplazo(I, [H|T], L, []):-
+%%     reemplazo()
+reemplazo(I, O, [I|T], [O|T2]) :-
+    reemplazo(I, O, T, T2).
+reemplazo(I, O, [H|T], [H|T2]) :-
+    dif(H,I), reemplazo(I, O, T, T2).
+
+
+% Remplaza en todas las cartas por elem
+elemIn([],_,_,Lout):-!.
+elemIn(_,[],_,Lout):- !.
+elemIn(CS,[H|X],I,[Lout|L1]):-
+    reemplazo(I,H,CS,Lout),
+    I1 is I + 1,
+    elemIn(Lout,X,I1,L1).
+reversar([_|X],L):-
+    reverse(X,L).
+cabeza([H|T],H).
+
+agregarElementos(CS,Elements,CSout):-
+    elemIn(CS,Elements,1,L),
+    reversar(L,L1),
+    cabeza(L1,CSout).
+
 
 mazoCartas(N,L):-
     crearPrimera(N,L1),
@@ -69,46 +99,52 @@ mazoCartas(N,L):-
     append(L1,L2,L4),
     append(L4,L3,L5),
     flatten(L5,L6),
-    reemplazar(0,L6,L7),
+    borrar(0,L6,L7),
     X is N + 1,
     partir(L7,X,L), !.
 
-maximoCartas(NumE,X, L, L1):-
-    X < 1,
-    Y is NumE ** 2 + NumE +1,
-    maximoCartas(NumE,Y, L, L1).
+maximoCartas(_,_,_,[],L):-
+    L = [], !.
+maximoCartas(NumE,X,I,[H|T],[H|L]):-
+    X < I, L = [],!.
+maximoCartas(NumE,X,I,[H|T],[H|L]):-
+    X >= I,
+    I1 is I + 1,
+    maximoCartas(NumE,X,I1,T,L).
 
-maximoCartas(NumE,X, L, L1):-
-    X > NumE ** 2 + NumE +1,
-    Y is NumE ** 2 + NumE +1,
-    maximoCartas(NumE,Y, L, L1).
 
-maximoCartas(NumE,X, L, L1):-
-    length(L1, X),
-    append(L1, _, L).
 
+ %%% -------------- Creacion de Mazo --------------
 
 % Si no hay elementos y maxC -1
 cardsSet([],NumE,-1,Seed,CS):-
     N is NumE - 1,
-    mazoCartas(N,CS).
+    mazoCartas(N,CS),!.
 
 % Si no hay elementos y maxC especificado
 cardsSet([],NumE,MaxC,Seed,CS):-
     N is NumE - 1,
     mazoCartas(N,L),
-    maximoCartas(NumE,MaxC,L,CS).
+    maximoCartas(NumE,MaxC,2,L,CS).
 
 % Si hay elementos y maxC -1
 cardsSet(Elements,NumE,-1,Seed,CS):-
     N is NumE - 1,
-    mazoCartas(N,CS).
+    mazoCartas(N,CS1),
+    flatten(CS1,CS2),
+    agregarElementos(CS2,Elements,CS3),
+    partir(CS3,NumE,CS).
+
 
 % Si hay elementos y maxC especificado
 cardsSet(Elements,NumE,MaxC,Seed,CS):-
     N is NumE - 1,
-    mazoCartas(N,L),
-    maximoCartas(NumE,MaxC,L,CS).
+    mazoCartas(N,CS1),
+    flatten(CS1,CS2),
+    agregarElementos(CS2,Elements,CS3),
+    partir(CS3,NumE,CS4),
+    maximoCartas(NumE,MaxC,2,CS4,CS).
+
 
 
 %% cardsSetIsDobble(CS):-
@@ -122,10 +158,10 @@ cardsSetFindTotalCards(C2,FTC):-
     cardsSet(E,X,-1,Seed,CS),
     length(CS,FTC).
 
-cardsSetMissingCards(CS,MS):-
-    length(CS,X),
+cardsSetMissingCards([H|CS],MS):-
+    length(H,X),
     cardsSet(E,X,-1,Seed,CS1),
-    subtract(CS1,CS,MS).
+    subtract(CS1,[H|CS],MS).
 
 % Parte de CardsSetToString
 cardsSetToString(CS,CSout):-
@@ -159,10 +195,9 @@ dobbleGame(NumPlayers,CardsSet,Mode,Seed,[NumPlayers,CardsSet,Mode,Seed]).
 dobbleGameRegister(User,GameIn,[[User]|GameIn]):-
     dobbleGame(INT,_,_,_,GameIn),!.
 
-%dobbleGameRegister(User,GameIn,[User|GameIn]):-
-%existe([N,_], [[N,_]|_]):- !.
-%existe(U,[_|Us]):- existe(U,U2).
 
-dobbleGameRegister(User,[[X|Y]|GameIn],[[User,X|Y]|GameIn]):- !.
+dobbleGameRegister(User,[[X|Y]|GameIn],[[User,X|Y]|GameIn]):-
+    User \= X.
+
 
 dobbleGameWhoseTurnIsIt(Game,Username).
