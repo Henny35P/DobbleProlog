@@ -168,6 +168,7 @@ maximoCartas(NumE,X,I,[H|T],[H|L]):-
 
  %%% -------------- Creacion de Mazo --------------
 
+% Constructor
 % Descripcion: Predicado que generara el mazo segun
 % lo que usuario ingrese, llama a otros predicados anteriores
 %
@@ -200,11 +201,11 @@ cardsSet(Elements,NumE,MaxC,Seed,CS):-
     partir(CS3,NumE,CS4),
     maximoCartas(NumE,MaxC,2,CS4,CS).
 
-
+% Selector
 % Descripcion: Buscara la nth card del mazo
 cardsSetNthCard(CS,X,CS1):-
     nth0(X,CS,CS1).
-
+% Otras Funciones
 % Descripcion: Busca la cantidad de cartas totales segun una carta
 cardsSetFindTotalCards(C2,FTC):-
     length(C2,X),
@@ -212,6 +213,7 @@ cardsSetFindTotalCards(C2,FTC):-
     length(CS,FTC).
 
 
+% Otras Funciones
 % Descripcion: Busca las cartas que faltan para un mazo valido
 cardsSetMissingCards([H|CS],MS):-
     length(H,X),
@@ -219,6 +221,7 @@ cardsSetMissingCards([H|CS],MS):-
     subtract(CS1,[H|CS],MS).
 
 % Parte de CardsSetToString
+% Selector
 % Descripcion: Transforma el mazo a strings
 cardsSetToString(CS,CSout):-
     printListOfList(CS,1,L1),
@@ -252,12 +255,14 @@ printList(L,STR) :-
 %
 %%%%%% TDA GAME %%%%%%%
 
-
+%% Constructor
 % Descripcion: Predicado constructor, Generara el juego
 dobbleGame(NumPlayers,CardsSet,Mode,Seed,[NumPlayers,CardsSet,Mode,Seed]).
 
 
 % Descripcion: Se agregara usuarios al juego
+% Modificador
+
 dobbleGameRegister(User,GameIn,[[User]|GameIn]):-
     dobbleGame(INT,_,_,_,GameIn),!.
 
@@ -268,7 +273,14 @@ dobbleGameRegister(User,[[X|Y]|GameIn],[[User,X|Y]|GameIn]):-
     cantidad([[X|Y]|GameIn],Players),
     Int > Players.
 
+dobbleGameRegister(User,[[X|Y]|GameIn],[[X|Y]|GameIn]):-
+    User \= X,
+    numeroJugador([[X|Y]|GameIn],Int),
+    cantidad([[X|Y]|GameIn],Players),
+    Int < Players, false.
 
+
+% Selector
 % Descripcion: Busca cuantos jugadores maximos pueden haber
 numeroJugador([Players|X],Y):-
     nth0(0,X,Y).
@@ -282,4 +294,39 @@ cantidad([X|Game],Int):-
 dobbleGamePlay(Game,null,GameOut):-
     dobbleGameRegister(_,Y,Game).
 
-dobbleGamePlay(Game,Action,GameOut):-
+dobbleGamePlay(Game,Action,GameOut).
+
+
+%%% Ejemplos Predicados %%%
+%%%
+%%% CardsSet
+%cardsSet(A,7,-1,Seed,CS).
+%cardsSet(["A","B","C","D","E","F","G","H","I"],3,-1,Seed,CS).
+%cardsSet(A,7,4,Seed,CS).
+%%% cardsSetNthCard
+%cardsSet(A,7,-1,Seed,CS),cardsSetNthCard(CS,0,CS1).
+%cardsSet(["A","B","C","D","E","F","G","H","I"],3,-1,Seed,CS),cardsSetNthCard(CS,5,CS1).
+%cardsSet(A,7,4,Seed,CS),cardsSetNthCard(CS,3,CS1).
+%%% cardsSetFindTotalCards
+%cardsSetFindTotalCards([1,2,3,4],CS).
+%cardsSet(["A","B","C","D","E","F","G","H","I"],3,-1,Seed,CS),cardsSetNthCard(CS,5,CS1),cardsSetFindTotalCards(CS1,CS2).
+%cardsSet(A,7,4,Seed,CS),cardsSetNthCard(CS,3,CS1),cardsSetFindTotalCards(CS1,CS2).
+%%% cardsSetMissingCards
+%cardsSetMissingCards([[1,2,3,4],[7,6,5,1]],CS2).
+%cardsSet(A,7,3,Seed,CS),cardsSetMissingCards(CS,CS1).
+%cardsSet(A,7,-1,Seed,CS),cardsSetMissingCards(CS,CS1).
+%%% cardsSetToString
+%cardsSet(A,7,-1,Seed,CS),cardsSetToString(CS,CS1).
+%cardsSet(["A","B","C","D","E","F","G","H","I"],3,-1,Seed,CS),cardsSetToString(CS,CS1).
+%cardsSet(A,7,4,Seed,CS),cardsSetToString(CS,CS1).
+%%% dobbleGame
+%cardsSet(A,7,-1,Seed,CS),dobbleGame(4,CS,"STACK",Seed,G).
+%cardsSet(["A","B","C","D","E","F","G","H","I"],3,-1,Seed,CS),dobbleGame(2,CS,"STACK",Seed,G).
+%cardsSet(A,7,4,Seed,CS),dobbleGame(3,CS,"STACK",Seed,G).
+%%%
+%%%
+%cardsSet(["A","B","C","D","E","F","G","H","I"],3,-1,Seed,CS),dobbleGame(2,CS,"STACK",Seed,G),dobbleGameRegister("DIINF",G,G1),dobbleGameRegister("Prolog",G1,G2).
+% Falso ya que se repiten usuarios
+%cardsSet(A,7,-1,Seed,CS),dobbleGame(4,CS,"STACK",Seed,G),dobbleGameRegister("DIINF",G,G1),dobbleGameRegister("DIINF",G1,G2).
+%Regresa Falso ya que no pueden haber mas jugadores
+%dobbleGame(3,CS,"STACK",Seed,G),dobbleGameRegister("DIINF",G,G1),dobbleGameRegister("Prolog",G1,G2),dobbleGameRegister("USACH",G2,G3),dobbleGameRegister("LLENO",G3,G4).
