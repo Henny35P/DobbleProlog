@@ -146,10 +146,6 @@ cardsSet(Elements,NumE,MaxC,Seed,CS):-
     maximoCartas(NumE,MaxC,2,CS4,CS).
 
 
-
-%% cardsSetIsDobble(CS):-
-%%     CS
-%%
 cardsSetNthCard(CS,X,CS1):-
     nth0(X,CS,CS1).
 
@@ -171,18 +167,17 @@ cardsSetToString(CS,CSout):-
 
 headOut([L|X],Xout):-
     atomics_to_string(X," ",Xout).
-
+% Fin parte cardsSetToString
 removerDup(L,X):-
     flatten(L,L1),
     sort(L1,X).
 printListOfList([],I,STR).
-printListOfList([H|T],I,[STR5|STR]) :-
+printListOfList([H|T],I,[STR4|STR]) :-
     number_string(I,Contador),
     printList(H,STR1),
     string_concat("Carta ",Contador,STR2),
     string_concat(STR2,": ",STR3),
     string_concat(STR3,STR1,STR4),
-    string_concat(STR4, "\n",STR5),
     I1 is I + 1,
     printListOfList(T,I1,STR).
 printList(L,STR) :-
@@ -197,7 +192,21 @@ dobbleGameRegister(User,GameIn,[[User]|GameIn]):-
 
 
 dobbleGameRegister(User,[[X|Y]|GameIn],[[User,X|Y]|GameIn]):-
-    User \= X.
+    User \= X,
+    numeroJugador([[X|Y]|GameIn],Int),
+    cantidad([[X|Y]|GameIn],Players),
+    Int > Players.
+
+numeroJugador([Players|X],Y):-
+    nth0(0,X,Y).
 
 
-dobbleGameWhoseTurnIsIt(Game,Username).
+cantidad([X|Game],Int):-
+    length(X,Int).
+
+
+
+dobbleGamePlay(Game,null,GameOut):-
+    dobbleGameRegister(_,Y,Game).
+
+dobbleGamePlay(Game,Action,GameOut):-
