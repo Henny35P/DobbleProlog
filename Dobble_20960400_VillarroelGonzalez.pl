@@ -201,6 +201,18 @@ cardsSet(Elements,NumE,MaxC,Seed,CS):-
     partir(CS3,NumE,CS4),
     maximoCartas(NumE,MaxC,2,CS4,CS).
 
+cardsSetIsDobble(CS):-
+    igualLargo(CS).
+
+
+igualLargo(CS):-
+    maplist(length,CS,Largo),
+    iguales(Largo).
+
+iguales([]).
+iguales([_]).
+iguales([X,X|T]) :- iguales([X|T]).
+
 % Selector
 % Descripcion: Buscara la nth card del mazo
 cardsSetNthCard(CS,X,CS1):-
