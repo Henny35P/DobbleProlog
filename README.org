@@ -1,6 +1,8 @@
 #+title: Laboratorio 2: Prolog
-#+author: Hans Villarroel
 #+date: 2022-04-22
-Este repositorio contiene el laboratorio 2 de la asignatura: Paradigmas de
-Programacion.
-Se desarrolla este laboratorio con el uso de el lenguaje de programacion Prolog.
+
+Implementancion de Dobble en Prolog
+ // Para este laboratorio se uso el comodin, por lo tanto nota final es 4.0 //
+Nota Final : 4.0
+Nota Informe : 6.0
+Nota Codigo : 4.0
